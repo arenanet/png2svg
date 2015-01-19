@@ -1,0 +1,7 @@
+{
+    "name"            : "png2svg",
+    "version"         : "0.0.1",
+    "main"            : "index.html",
+    "toolbar"         : false,
+    "single-instance" : false
+}
