@@ -86,7 +86,7 @@
 
     if(!fs.existsSync(filePath)) {
         showHelp("Invalid file: " + filePath);
-        if(args.s) {
+        if(!args.s) {
             win.close();
         }
         return;
@@ -94,7 +94,7 @@
 
     if(quality < 0 || quality > 1) {
         showHelp("Invalid quality: " + quality);
-        if(args.s) {
+        if(!args.s) {
             win.close();
         }
         return;
