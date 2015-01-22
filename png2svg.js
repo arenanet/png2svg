@@ -37,6 +37,7 @@
         output("    -f, --file          Absolute path to png file to convert into an svg");
         output("    -q, --quality       Image quality, 0-1 (default 0.83)");
         output("    -s, --show          Keep the node-webkit window open when finished");
+        output("    -p, --webp          Use webp instead of jpeg for the embedded dataUrl");
     };
 
     buildSVG = function(canvas) {
@@ -58,6 +59,7 @@
         svg.setAttribute("xmlns", SVGNS);
         svg.setAttribute("width", width);
         svg.setAttribute("height", height);
+        svg.setAttribute("preserveAspectRatio", "none");
         svg.setAttribute("viewBox", "0 0 " + width + " " + height);
         svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
 
@@ -74,7 +76,7 @@
         image.setAttribute("width", width);
         image.setAttribute("height", height * 2);
 
-        image.setAttributeNS("http://www.w3.org/1999/xlink", "A:href", canvas.toDataURL("image/jpeg", quality));
+        image.setAttributeNS("http://www.w3.org/1999/xlink", "A:href", canvas.toDataURL(args.p ? "image/webp" : "image/jpeg", quality));
         
         return svg.outerHTML;
     };
