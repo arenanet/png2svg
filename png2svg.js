@@ -1,3 +1,4 @@
+/*jshint node:true, browser:true*/
 (function() {
     "use strict";
     //TODO : Support relative paths and fix other command line quirks due to using nw
@@ -7,38 +8,15 @@
         SVGNS    = "http://www.w3.org/2000/svg",
         fs       = require("fs"),
         path     = require("path"),
-        minimist = require("minimist"),
-        gui      = require('nw.gui'),
-        win      = gui.Window.get(),
+        win      = require("nw.gui").Window.get(),
         le       = require("os").endianness() === "LE",
-        args     = minimist(gui.App.argv, {
-            alias     : { f : "file", q : "quality", h : "help", s : "show" },
-            "default" : { q : 0.83 }
-        }),
+        cli      = require("./lib/cli.js"),
+        args     = cli.args,
         quality  = args.q,
-        filePath = args.f && path.resolve(args.f),
+        filePath = args.f,
         outPath  = path.join(path.dirname(filePath), path.basename(filePath, path.extname(filePath))) + ".svg",
         image    = document.createElement("img"),
-        buildSVG, output, showHelp;
-
-    output = function(text) {
-        document.body.innerHTML += "<p>" + text + "</p>";
-    };
-    
-    showHelp = function(errText) {
-        if(errText) {
-            output("<span style='color:red;'>Error: " + errText + "</span><br/>");
-        }
-
-        output("Convert & optimize a PNG into an SVG using an embedded jpeg + mask");
-        output("Usage:");
-        output("    png2svg -f d:/image.png -q 70");
-        output("Options: ");
-        output("    -f, --file          Absolute path to png file to convert into an svg");
-        output("    -q, --quality       Image quality, 0-1 (default 0.83)");
-        output("    -s, --show          Keep the node-webkit window open when finished");
-        output("    -p, --webp          Use webp instead of jpeg for the embedded dataUrl");
-    };
+        buildSVG;
 
     buildSVG = function(canvas) {
         var width  = canvas.width,
@@ -81,29 +59,12 @@
         return svg.outerHTML;
     };
 
-    // Validate command line args
-    if(args.h) {
-        return showHelp();
-    }
-
-    if(!fs.existsSync(filePath)) {
-        showHelp("Invalid file: " + filePath);
-        if(!args.s) {
-            win.close();
-        }
-        return;
-    }
-
-    if(quality < 0 || quality > 1) {
-        showHelp("Invalid quality: " + quality);
-        if(!args.s) {
-            win.close();
-        }
+    if(!cli.valid) {
         return;
     }
 
     image.src = filePath;
-    output("Loading " + filePath);
+    cli.out("Loading " + filePath);
     image.onload = function() { 
         var canvas   = document.createElement("canvas"),
             context  = canvas.getContext("2d"),
@@ -146,15 +107,15 @@
             var inFile, outFile;
 
             if(err) {
-                showHelp(err);
+                cli.help(err);
             } else {
                 inFile  = fs.statSync(filePath);
                 outFile = fs.statSync(outPath);
-                output("Successfully Wrote " + outPath);
-                output("quality: " + quality);
-                output("original size: " + (inFile.size / 1024).toFixed(2) + " KB");
-                output("compressed SVG size: " + (outFile.size / 1024).toFixed(2) + " KB (" + (outFile.size / inFile.size * 100).toFixed(1) + "% of original)");
-                output((Date.now() - start) + "ms elapsed");
+                cli.out("Successfully Wrote " + outPath);
+                cli.out("quality: " + quality);
+                cli.out("original size: " + (inFile.size / 1024).toFixed(2) + " KB");
+                cli.out("compressed SVG size: " + (outFile.size / 1024).toFixed(2) + " KB (" + (outFile.size / inFile.size * 100).toFixed(1) + "% of original)");
+                cli.out((Date.now() - start) + "ms elapsed");
             }
 
             if(!args.s) {
