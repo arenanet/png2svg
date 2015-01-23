@@ -11,7 +11,7 @@ Download and unzip the built version, then invoke from the command line or run a
 
 ## Usage
 ```bat
-d:\png2svg\png2svg.exe -f d:/image.png -q 70
+d:\png2svg\png2svg.exe -f d:/image.png -q 0.7
 ```
 
 #### Options
