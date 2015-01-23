@@ -26,3 +26,8 @@ d:\png2svg\png2svg.exe -f d:/image.png -q 0.7
    * Use -s to show info/errors (I'd prefer to have all the interaction via command line, but node-webkit doesn't have support for this)
    * Make sure your server gzips svgs!
 
+***
+###### Related / Thanks
+   * Inspired by http://quasimondo.com/ZorroSVG/ - Thanks [@quasimondo](http://twitter.com/quasimondo)
+   * http://peterhrynkow.com/how-to-compress-a-png-like-a-jpeg/
+   * http://codepen.io/shshaw/full/tKpdl
