@@ -2,7 +2,7 @@
 This is a simple tool invoked from the command line which converts a png into an svg that uses jpeg compression.  This can significantly reduce image sizes for use on the web.
 
 ## Installation
-Download and unzip the built version, then invoke from the command line or run as a node-webkit app.  Warning: Only the Windows version has been tested
+Download and unzip the built version, then invoke from the command line or run as a node-webkit app.
 
 #### Downloads
    * Windows: [32bit](https://github.com/arenanet/png2svg/releases/download/0.1.0/png2svg-win32.zip) - [64bit](https://github.com/arenanet/png2svg/releases/download/0.1.0/png2svg-win64.zip)
