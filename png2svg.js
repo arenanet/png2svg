@@ -18,19 +18,19 @@
         image    = document.createElement("img"),
         buildSVG;
 
-    buildSVG = function(canvas) {
-        var width  = canvas.width,
-            height = canvas.height * 0.5,
-            svg    = document.createElementNS(SVGNS, "svg"),
-            defs   = document.createElementNS(SVGNS, "defs"),
-            mask   = document.createElementNS(SVGNS, "mask"),
-            use    = document.createElementNS(SVGNS, "use"),
-            image  = document.createElementNS(SVGNS, "image");
+    buildSVG = function(canvas, imageBase64, maskBase64) {
+        var width     = canvas.width,
+            height    = canvas.height,
+            svg       = document.createElementNS(SVGNS, "svg"),
+            defs      = document.createElementNS(SVGNS, "defs"),
+            mask      = document.createElementNS(SVGNS, "mask"),
+            maskImage = document.createElementNS(SVGNS, "image"),
+            image     = document.createElementNS(SVGNS, "image");
         
         // Add all the svg elements
         svg.appendChild(defs);
             defs.appendChild(mask);
-                mask.appendChild(use);
+                mask.appendChild(maskImage);
         svg.appendChild(image);
 
         // Set their attributes
@@ -43,18 +43,16 @@
 
         mask.setAttribute("id", "mask");
 
-        use.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#image");
-        use.setAttribute("width", width);
-        use.setAttribute("height", height);
-        use.setAttribute("x", 0);
-        use.setAttribute("y", -height);
+        maskImage.setAttributeNS("http://www.w3.org/1999/xlink", "A:href", maskBase64);
+        maskImage.setAttribute("width", width);
+        maskImage.setAttribute("height", height);
         
         image.setAttribute("id", "image");
         image.setAttribute("mask", "url(#mask)");
         image.setAttribute("width", width);
-        image.setAttribute("height", height * 2);
+        image.setAttribute("height", height);
 
-        image.setAttributeNS("http://www.w3.org/1999/xlink", "A:href", canvas.toDataURL(args.p ? "image/webp" : "image/jpeg", quality));
+        image.setAttributeNS("http://www.w3.org/1999/xlink", "A:href", imageBase64);
         
         return svg.outerHTML;
     };
@@ -68,28 +66,18 @@
     image.onload = function() { 
         var canvas   = document.createElement("canvas"),
             context  = canvas.getContext("2d"),
-            imagedata, buf32, imgLen, i, alphaByte;
+            imagedata, buf32, i, alphaByte, imageBase64, maskBase64;
 
         canvas.width  = image.naturalWidth;
-        canvas.height = image.naturalHeight * 2;
+        canvas.height = image.naturalHeight;
 
-        // Draw the image twice, the bottom one will be the mask
+        // **** Generate mask ****
         context.drawImage(image, 0, 0);
-        context.drawImage(image, 0, image.naturalHeight);
-
         imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
-        
-        buf32  = new Uint32Array(imagedata.data.buffer);
-        imgLen = buf32.length / 2;
+        buf32 = new Uint32Array(imagedata.data.buffer);
 
         // Ugly loop, but speeds things up for big images
         for (i = buf32.length; --i >= 0; ) {
-            if(i < imgLen) {
-                // Make sure the image has alpha 1 everywhere - otherwise transparency turns out a bit off
-                buf32[i] |= le ? 0xff000000 : 0xff;
-                continue;
-            }
-            
             // Create a grayscale mask - sets alpha to 1 & copies the alpha byte to RGB
             alphaByte = le ? (buf32[i] >>> 24) : buf32[i];
             if(le) {
@@ -97,13 +85,28 @@
             } else {
                 buf32[i] = 0xff | (alphaByte << 24) | (alphaByte << 16) | (alphaByte << 8);
             }
-            
         }
 
-        // Replace the bottom image with the mask
         context.putImageData(imagedata, 0, 0);
+        maskBase64 = canvas.toDataURL(args.p ? "image/webp" : "image/jpeg", quality);
 
-        fs.writeFile(outPath, buildSVG(canvas), function(err,a) {
+        // Not sure why, but some junk sticks around if the context isn't cleared
+        context.clearRect(0,0, canvas.width, canvas.height);
+
+        // **** Generate image ****
+        context.drawImage(image, 0, 0);
+        imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
+        buf32 = new Uint32Array(imagedata.data.buffer);
+
+        for (i = buf32.length; --i >= 0;) {
+            // Make sure the image has alpha 1 everywhere - otherwise transparency turns out a bit off
+            buf32[i] |= le ? 0xff000000 : 0xff;
+        }
+
+        context.putImageData(imagedata, 0, 0);
+        imageBase64 = canvas.toDataURL(args.p ? "image/webp" : "image/jpeg", quality);
+
+        fs.writeFile(outPath, buildSVG(canvas, imageBase64, maskBase64), function(err,a) {
             var inFile, outFile;
 
             if(err) {
