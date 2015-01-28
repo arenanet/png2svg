@@ -71,6 +71,8 @@
         canvas.width  = image.naturalWidth;
         canvas.height = image.naturalHeight;
 
+        context.globalCompositeOperation = "copy";
+
         // **** Generate mask ****
         context.drawImage(image, 0, 0);
         imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -89,9 +91,6 @@
 
         context.putImageData(imagedata, 0, 0);
         maskBase64 = canvas.toDataURL(args.p ? "image/webp" : "image/jpeg", quality);
-
-        // Not sure why, but some junk sticks around if the context isn't cleared
-        context.clearRect(0,0, canvas.width, canvas.height);
 
         // **** Generate image ****
         context.drawImage(image, 0, 0);
