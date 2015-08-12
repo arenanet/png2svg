@@ -1,6 +1,8 @@
 {
-    "name"            : "png2svg",
-    "version"         : "0.1.0",
-    "main"            : "index.html",
-    "single-instance" : false
+  "name": "png2svg",
+  "version": "0.1.0",
+  "main": "index.html",
+  "single-instance": false,
+  "dependencies": {
+  }
 }
