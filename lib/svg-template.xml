@@ -1,10 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="<%= width %>" height="<%= height %>" preserveAspectRatio="none" viewBox="0 0 <%= width %> <%= height %>" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="<%= width %>"
+    height="<%= height %>"
+    preserveAspectRatio="none"
+    viewBox="0 0 <%= width %> <%= height %>"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+>
     <defs>
         <mask id="mask">
-            <image xmlns:A="http://www.w3.org/1999/xlink" A:href="data:image/jpeg;base64,<%= mask %>" width="<%= width %>" height="<%= height %>">
-            </image>
+            <image
+                xlink:href="data:<%= mime %>;base64,<%= mask %>"
+                width="<%= width %>"
+                height="<%= height %>"
+            ></image>
         </mask>
     </defs>
-    <image id="image" mask="url(#mask)" width="<%= width %>" height="<%= height %>" xmlns:A="http://www.w3.org/1999/xlink" A:href="data:image/jpeg;base64,<%= image %>">
-    </image>
+    <image
+        id="image"
+        style="mask: url(#mask);"
+        width="<%= width %>"
+        height="<%= height %>"
+        xlink:href="data:image/jpeg;base64,<%= image %>"
+    ></image>
 </svg>

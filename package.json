@@ -2,13 +2,13 @@
   "name": "png2svg",
   "version": "1.0.0",
   "dependencies": {
-    "asynquence": "^0.1.0",
     "color-transform": "^1.0.1",
-    "concat-stream": "^1.5.0",
+    "concat-stream": "^1.5.1",
     "jpg-stream": "^1.1.1",
-    "lodash.template": "^3.6.2",
-    "minimist": "^1.1.3",
-    "png-stream": "^1.0.4"
+    "lodash.template": "^4.2.1",
+    "minimist": "^1.2.0",
+    "png-stream": "^1.0.4",
+    "run-series": "^1.1.4"
   },
   "devDependencies": {
     "eslint": "^2.2.0",
