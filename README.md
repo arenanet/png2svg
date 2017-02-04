@@ -1,4 +1,6 @@
 # png2svg
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/arenanet/png2svg.svg)](https://greenkeeper.io/)
 This is a simple tool invoked from the command line which converts a png into an svg that uses jpeg compression.  This can significantly reduce image sizes for use on the web.
 
 ## Installation
